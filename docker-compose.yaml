@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3333'
+    container_name: backend-template
+    restart: always
+    environment:
+      - NODE_ENV=development
+      - POSTGRES_HOST=db
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DATABASE=template
+      - POSTGRES_PORT=5432
+    networks:
+      - postgres_template
+    depends_on:
+      - db
+  db:
+    build:
+      context: .
+      dockerfile: db.Dockerfile
+    restart: always
+    container_name: db_template
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=template
+    networks:
+      - postgres_template
+    volumes:
+      - ./docker/db-data:/var/lib/postgresql/data
+networks:
+  postgres_template:
