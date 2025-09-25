@@ -4,7 +4,7 @@ import { TypeResponse } from './types/typeResponse';
 import { TransactionInput } from '@domain/transactions/inputs/transaction-input';
 import { IChatBotService } from './types/interfaceClass';
 
-export class chatBotService implements IChatBotService {
+export class ChatBotService implements IChatBotService {
   public async axiosChatBot(message: string): Promise<TransactionInput> {
     const body: typePost = {
       messages: [

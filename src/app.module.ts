@@ -8,6 +8,8 @@ import { UsersModule } from './app/users/users.module';
 import { AuthenticationModule } from './app/authentication/authentication.module';
 import { GlobalModule } from './global.module';
 import { TransactionsModule } from '@app/transactions/transactions.module';
+import { BotService } from '@app/telegram/telegramBot';
+import { ChatBotService } from '@app/chat_bot_service/chat_bot.service';
 
 @Module({
   imports: [
@@ -16,9 +18,9 @@ import { TransactionsModule } from '@app/transactions/transactions.module';
     UsersModule,
     TransactionsModule,
     AuthenticationModule,
-    GlobalModule,
+    GlobalModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService, BotService, ChatBotService],
 })
 export class AppModule {}

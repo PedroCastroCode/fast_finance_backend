@@ -1,5 +1,4 @@
-import { chatBotService } from '@app/chat_bot_service/chat_bot.service';
-import { IChatBotService } from '@app/chat_bot_service/types/interfaceClass';
+import { ChatBotService } from '@app/chat_bot_service/chat_bot.service';
 import { Provider } from '@nestjs/common';
 import CreateTransaction from '@use-cases/Transactions/create-Transaction';
 import { GetTransactionById } from '@use-cases/Transactions/get-Transaction-by-id';
@@ -27,6 +26,6 @@ export const useCasesProvider: Provider[] = [
   UpdateTransaction,
   {
     provide: 'IChatBotService',
-    useClass: chatBotService,
+    useClass: ChatBotService,
   },
 ];

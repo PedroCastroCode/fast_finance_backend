@@ -1,14 +1,11 @@
 import { ICreateExecute } from '@use-cases/abstractions/iexecute';
 import { TransactionsResponse } from '@domain/transactions/responses/transactions.response';
 import { ITransactionsRepository } from '@domain/transactions/repositories/itransactions.repository';
-import HttpError from '@domain/utils/errors/http-errors';
 import { TransactionInput } from '@domain/transactions/inputs/transaction-input';
-import UniqueId from '@domain/basic/uniqueId';
 import Transactions from '@domain/transactions/entities/transaction';
 import { Inject } from '@nestjs/common';
 import { CreateTransactionDto } from '@app/transactions/dto/create-transactions.dto';
 import { IChatBotService } from '@app/chat_bot_service/types/interfaceClass';
-import { transactionType } from '@domain/transactions/enum/transactionType';
 
 export default class CreateTransaction
   implements ICreateExecute<CreateTransactionDto, TransactionsResponse>
