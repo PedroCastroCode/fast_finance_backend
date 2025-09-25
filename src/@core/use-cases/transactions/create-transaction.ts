@@ -17,14 +17,14 @@ export default class CreateTransaction
     private chatBotService: IChatBotService,
   ) {}
   async Execute(props: CreateTransactionDto): Promise<TransactionsResponse> {
-    const input = await this.chatBotService.axiosChatBot(props.message);
+    // const input = await this.chatBotService.axiosChatBot(props.message);
 
     const transactionProp: TransactionInput = {
-      type: input.type,
-      value: input.value,
-      category: input.category,
-      date: input.date,
-      description: input.description,
+      type: props.type,
+      value: props.value,
+      category: props.category,
+      date: props.date,
+      description: props.description,
     };
     const newTransaction = Transactions.newTransaction(transactionProp);
     await this.transactionsRepo.Create(newTransaction);

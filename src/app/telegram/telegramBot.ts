@@ -1,11 +1,15 @@
 import { ChatBotService } from '@app/chat_bot_service/chat_bot.service';
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
+import CreateTransaction from '@use-cases/Transactions/create-Transaction';
 
 @Injectable()
 export class BotService implements OnModuleInit {
   private readonly logger = new Logger(BotService.name);
   private bot: any;
-  constructor(private readonly chatBotService: ChatBotService) {}
+  constructor(
+    private readonly chatBotService: ChatBotService,
+    private readonly createTransaction: CreateTransaction,
+  ) {}
 
   onModuleInit() {
     const token = process.env.TELEGRAM_BOT_TOKEN;
@@ -21,31 +25,43 @@ export class BotService implements OnModuleInit {
       this.logger.error(`polling_error: ${JSON.stringify(err)}`);
     });
 
-    this.bot.on('message', (msg: any) => {
-      this.logger.log(`Mensagem recebida: ${JSON.stringify({
-        chatId: msg.chat?.id,
-        from: msg.from?.username,
-        text: msg.text,
-      })}`);
+    this.bot.on('message', async (msg: any) => {
+      this.logger.log(
+        `Mensagem recebida: ${JSON.stringify({
+          chatId: msg.chat?.id,
+          from: msg.from?.username,
+          text: msg.text,
+        })}`,
+      );
 
-      const text = (msg.text || '').toLowerCase().trim();
-      if(text) {
-       this.chatBotService.axiosChatBot(text).then((res) => {
-        this.logger.verbose(res)
-        var messageToUser = `Registrado ${res.type} no dia ${res.date} na categoria ${res.category} no valor de ${res.value}` 
-        this.bot.sendMessage(
+      const text = (msg.text || '').toLowerCase().trim(); //salgado 7
+      if (text) {
+        const res = await this.chatBotService.axiosChatBot(text);
+        if (!res.success) {
+          this.bot.sendMessage(
             msg.chat.id,
-            messageToUser
-        )
-       }).catch((err) => {
-        this.logger.error(`Falha ao enviar mensagem: ${err?.message ?? JSON.stringify(err)}`);
-       })
-      } else  {
-        this.logger.error(`text vazio = ${text}`)
-      }
-     
-    });
+            'Não foi possível registrar a transação. Verifique os dados e tente novamente.',
+          );
+          return;
+        }
 
+        await this.createTransaction
+          .Execute(res.data)
+          .then(() => {
+            var messageToUser = `Registrado ${res.data.type} no dia ${res.data.date} na categoria ${res.data.category} no valor de ${res.data.value}`;
+            this.bot.sendMessage(msg.chat.id, messageToUser);
+          })
+          .catch((err) => {
+            this.logger.error(`Erro ao criar no banco: ${err.message}`);
+            this.bot.sendMessage(
+              msg.chat.id,
+              'Não foi possível registrar a transação. Verifique os dados e tente novamente.',
+            );
+          });
+      } else {
+        this.logger.error(`text vazio = ${text}`);
+      }
+    });
     this.logger.log('Telegram bot iniciado com polling: true.');
   }
 }

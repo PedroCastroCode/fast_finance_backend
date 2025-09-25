@@ -1,6 +1,7 @@
 export interface TypeResponse {
   success: boolean;
-  result: Result;
+  result?: Result;
+  message?: string;
 }
 
 export interface Result {
