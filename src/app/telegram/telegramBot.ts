@@ -29,7 +29,7 @@ export class BotService implements OnModuleInit {
       this.logger.log(
         `Mensagem recebida: ${JSON.stringify({
           chatId: msg.chat?.id,
-          from: msg.from?.username,
+          from: msg.from?.id,
           text: msg.text,
         })}`,
       );
